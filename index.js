@@ -237,12 +237,33 @@ app.get('/logout', (req, res) => {
         res.redirect('/login');
     }
 })
+//---------------- GET NO OF DOCUMENTS IN EACH SEMESTERS --------------
+let sem1TotalDocs;
+let sem2TotalDocs;
+let sem3TotalDocs;
+let sem4TotalDocs;
+async function findTotalDocs() {
+    sem1TotalDocs = await Document.countDocuments({relatedSem: 1 });
+    sem2TotalDocs = await Document.countDocuments({relatedSem: 2 });
+    sem3TotalDocs = await Document.countDocuments({relatedSem: 3 });
+    sem4TotalDocs = await Document.countDocuments({relatedSem: 4 });
+}
+
 // get particular teacher & send teacher page
 app.get("/teacher/:id", async (req, res) => {
     // first check whether user is authenticated or not
-    if (req.session.isAuth === true) {
+    if (req.session.isAuth === true && req.session.userType === "Teacher") {
         const foundUser = await User.findOne({ _id: req.params.id });
-        res.render("teacher", { user: foundUser });
+
+        // find total no of documents in each semester & pass to teacher or student page ;
+        // .exec(function (err, person) {
+        //     if (err) return handleError(err);
+        //     // Prints "Space Ghost is a talk show host."
+        //     console.log('%s %s is a %s.', person.name.first, person.name.last,
+        //         person.occupation);
+        // });;
+        await findTotalDocs(); // call & set total docs
+        res.render("teacher", { user: foundUser, sem1TotalDocs,sem2TotalDocs,sem3TotalDocs,sem4TotalDocs});
     } else {
         // user is not authenticated and send login page
         res.redirect("/login");
@@ -250,9 +271,10 @@ app.get("/teacher/:id", async (req, res) => {
 })
 // get particular student & send student page
 app.get("/student/:id", async (req, res) => {
-    if (req.session.isAuth === true) {
+    if (req.session.isAuth === true && req.session.userType === "Student") {
         const foundUser = await User.findOne({ _id: req.params.id });
-        res.render("student", { user: foundUser });
+        await findTotalDocs(); // call & set total docs
+        res.render("student", { user: foundUser ,sem1TotalDocs,sem2TotalDocs,sem3TotalDocs,sem4TotalDocs});
     } else {
         res.redirect('/login');
     }
@@ -279,7 +301,7 @@ app.get("/uploads/sem/:semNum", (req, res) => {
 //   }));
 app.post("/uploads/sem/:semNum", upload.single('sem_file'), async (req, res) => {
     if (req.session.isAuth === true && req.session.userType === "Teacher") { //authorised
-        console.log(req.file);
+        // console.log(req.file);
         // console.log(req.file.buffer);
         // console.log(req.session.user_ID);
         const foundUser = await User.findOne({ _id: req.session.user_ID }).select("-password"); // gives all things without password
@@ -326,7 +348,7 @@ app.post("/uploads/sem/:semNum", upload.single('sem_file'), async (req, res) => 
                     usesType: usesType,
                 });
                 await dataOfUploadedMongo.save();
-                res.send("Data saved to mongoDB successfully");
+                res.render("success");
             });
         });
     }
