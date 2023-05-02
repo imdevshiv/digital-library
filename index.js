@@ -357,6 +357,26 @@ app.post("/uploads/sem/:semNum", upload.single('sem_file'), async (req, res) => 
         res.redirect("/login");
     }
 })
+// document view page route
+app.get("/view/docs/sem/:semNum", async (req,res)=>{
+    //first uthenticate
+    const semNum = req.params.semNum;
+
+    if (req.session.isAuth === true) {
+        const finduser = await User.findOne({ _id: req.session.user_ID }).select("-password");
+        if (finduser.userType === "Teacher") {
+            // render teacher stuff
+            const allRelatedSemesterDocs =  await Document.find({ relatedSem: semNum });
+            res.render("alldocsviewpage",{semNum,user : finduser, documents : allRelatedSemesterDocs});
+        }else{
+            //render student stuff
+            res.render("alldocsviewpage",{semNum,user : finduser});
+        }
+    }else{
+        res.redirect("/login")
+    }
+})
+
 
 
 
