@@ -60,37 +60,127 @@
             <h1> Semester <%= semNum %> All Documents</h1>
             <% documents %>
         </div>
-        <div class="row gy-3 my-3">
-            <!-- row starts -->
-            <% documents.forEach(function(document) { %>
-            <div class="col-sm-6 col-md-4 col-lg-3">
-                <div class="card">
-                    <!-- Shows Image / pdf -->
-                    <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
-                        <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
-                    <% }else{ %>
-                        <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
-                    <% } %>
-                    <!-- <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                            the card's content.</p>
-                    </div> -->
-                    <ul class="list-group list-group-flush my-3">
-                        <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
-                        <!-- <li class="list-group-item">A second item</li> -->
-                    </ul>
-                    <div class="card-body">
-                        <button type="button" class="btn btn-primary btn-sm">View docs</button>
-                        <button type="button" class="btn btn-success btn-sm">Download</button>
+        <!-- IF THE USER IS ONLY STUDENT -->
+        <!-- STUDENT SECTION STARTS -->
+        <% if (user.userType === "Student") { %>
+            <div class="row gy-3 my-3"><!-- row starts -->
+                <% documents.forEach(function(document) { %>
+                    <!-- populate all documents -->
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <div class="card">
+                            <!-- Shows Image / pdf -->
+                            <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
+                                <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
+                            <% }else{ %>
+                                <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
+                            <% } %>
+                            <!-- <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                    the card's content.</p>
+                            </div> -->
+                            <ul class="list-group list-group-flush my-3">
+                                <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
+                                <!-- <li class="list-group-item">A second item</li> -->
+                            </ul>
+                            <div class="card-body">
+                                <button type="button" class="btn btn-primary btn-sm">View docs</button>
+                                <button type="button" class="btn btn-success btn-sm">Download</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <% }); %>
+                <% }); %>
+            </div><!-- row ends -->
+            <!-- STUDENT SECTION ENDS -->
+        <% }else{ %>
+                <!-- THEN USER MUST BE TEACHER -->
+                <hr>
+                <h3>DocumentsUploaded By You</h3>
+                <hr>
+                <% selfUploadedDocs %>
+                <!-- INDIVIDUAL TEACHER SECTION STARTS -->
+                <!-- Check whether teacher uploaded to this semester -->
+                    <% if(selfUploadedDocs.length === 0){ %>
+                        <p>No documents yet you have uploaded to Semester<%= semNum %>. </p>
+                    <% }else{ %>
+                        <div class="row gy-3 my-3"><!-- row starts -->
+                            <% selfUploadedDocs.forEach(function(document) { %>
+                                <!-- populate all documents -->
+                                <div class="col-sm-6 col-md-4 col-lg-3">
+                                    <div class="card">
+                                        <!-- Shows Image / pdf -->
+                                        <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
+                                            <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
+                                        <% }else{ %>
+                                            <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
+                                        <% } %>
+                                        <!-- <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                                the card's content.</p>
+                                        </div> -->
+                                        <ul class="list-group list-group-flush my-3">
+                                            <li class="list-group-item">Uploaded By : You </li>
+                                            <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
+                                            <!-- <li class="list-group-item">A second item</li> -->
+                                        </ul>
+                                        <div class="card-body">
+                                            <button type="button" class="btn btn-primary btn-sm">View docs</button>
+                                            <button type="button" class="btn btn-success btn-sm mx-3">Download</button>
+                                            <form style="display: inline-block;" action="/delete/doc/sem/<%= semNum %>/<%=document._id  %>" method="delete">
+                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div><!-- row ends -->
+                    <% } %>
+                    <!-- INDIVIDUAL TEACHER SECTION ENDS -->
+                <hr>
+                <h3>Documents uploaded By Other Teachers</h3>
+                <hr>
+                <% otherTeacherDocs %>
+                    <!-- OTHER TEACHER SECTION STARTS -->
+                    <!-- Check whether teacher uploaded to this semester -->
+                    <% if(otherTeacherDocs.length === 0){ %>
+                        <h5>Other teachers not yet uploaded any documents to Semester<%= semNum %>. </h5>
+                    <% }else{ %>
+                        <div class="row gy-3 my-3"><!-- row starts -->
+                            <% otherTeacherDocs.forEach(function(document) { %>
+                                <!-- populate all documents -->
+                                <div class="col-sm-6 col-md-4 col-lg-3">
+                                    <div class="card">
+                                        <!-- Shows Image / pdf -->
+                                        <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
+                                            <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
+                                        <% }else{ %>
+                                            <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
+                                        <% } %>
+                                        <!-- <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                                the card's content.</p>
+                                        </div> -->
+                                        <ul class="list-group list-group-flush my-3">
+                                            <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
+                                            <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
+                                            <!-- <li class="list-group-item">A second item</li> -->
+                                        </ul>
+                                        <div class="card-body">
+                                            <button type="button" class="btn btn-primary btn-sm">View docs</button>
+                                            <button type="button" class="btn btn-success btn-sm">Download</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div><!-- row ends -->
+                    <% } %>
+                    <!-- OTHER TEACHER SECTION ENDS -->
+        <!-- TEACHER SECTION ENDS -->
+        <% } %>
 
-            <!-- row ends -->
-        </div>
-    </div>
+    </div> <!-- container ends -->
 
 
     <!-- BOTSTRAP JS LINK -->

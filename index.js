@@ -4,6 +4,7 @@ const express = require('express');
 const ejs = require("ejs"); // require embeded javascript
 const bodyParser = require('body-parser'); // to help get form data from frontend
 const multer = require('multer'); // to catch files from form data from frontend
+const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose"); // to build connection between server and mongoDB
 const session = require("express-session"); // to store user session details
 const mongoStore = require("connect-mongo"); // it helps in storing session datas
@@ -160,7 +161,7 @@ app.post("/register", async (req, res) => {
             // when user is saved set session credentials
             req.session.user_ID = savedUser._id; // adding user id to session
             req.session.isAuth = true; // setting authenticate property -true.. that will be cheked in the routes
-            req.session.userType = findUser.userType; // setting user type as teacher or student - will be required to check in upload routing
+            req.session.userType = savedUser.userType; // setting user type as teacher or student - will be required to check in upload routing
             // redirect according to user type page
             if (savedUser.userType === "Student") {
                 res.redirect(`/student/${savedUser._id}`)
@@ -243,10 +244,10 @@ let sem2TotalDocs;
 let sem3TotalDocs;
 let sem4TotalDocs;
 async function findTotalDocs() {
-    sem1TotalDocs = await Document.countDocuments({relatedSem: 1 });
-    sem2TotalDocs = await Document.countDocuments({relatedSem: 2 });
-    sem3TotalDocs = await Document.countDocuments({relatedSem: 3 });
-    sem4TotalDocs = await Document.countDocuments({relatedSem: 4 });
+    sem1TotalDocs = await Document.countDocuments({ relatedSem: 1 });
+    sem2TotalDocs = await Document.countDocuments({ relatedSem: 2 });
+    sem3TotalDocs = await Document.countDocuments({ relatedSem: 3 });
+    sem4TotalDocs = await Document.countDocuments({ relatedSem: 4 });
 }
 
 // get particular teacher & send teacher page
@@ -263,7 +264,7 @@ app.get("/teacher/:id", async (req, res) => {
         //         person.occupation);
         // });;
         await findTotalDocs(); // call & set total docs
-        res.render("teacher", { user: foundUser, sem1TotalDocs,sem2TotalDocs,sem3TotalDocs,sem4TotalDocs});
+        res.render("teacher", { user: foundUser, sem1TotalDocs, sem2TotalDocs, sem3TotalDocs, sem4TotalDocs });
     } else {
         // user is not authenticated and send login page
         res.redirect("/login");
@@ -274,7 +275,7 @@ app.get("/student/:id", async (req, res) => {
     if (req.session.isAuth === true && req.session.userType === "Student") {
         const foundUser = await User.findOne({ _id: req.params.id });
         await findTotalDocs(); // call & set total docs
-        res.render("student", { user: foundUser ,sem1TotalDocs,sem2TotalDocs,sem3TotalDocs,sem4TotalDocs});
+        res.render("student", { user: foundUser, sem1TotalDocs, sem2TotalDocs, sem3TotalDocs, sem4TotalDocs });
     } else {
         res.redirect('/login');
     }
@@ -358,21 +359,22 @@ app.post("/uploads/sem/:semNum", upload.single('sem_file'), async (req, res) => 
     }
 })
 // document view page route
-app.get("/view/docs/sem/:semNum", async (req,res)=>{
+app.get("/view/docs/sem/:semNum", async (req, res) => {
     //first uthenticate
     const semNum = req.params.semNum;
 
     if (req.session.isAuth === true) {
         const finduser = await User.findOne({ _id: req.session.user_ID }).select("-password");
-        if (finduser.userType === "Teacher") {
-            // render teacher stuff
-            const allRelatedSemesterDocs =  await Document.find({ relatedSem: semNum });
-            res.render("alldocsviewpage",{semNum,user : finduser, documents : allRelatedSemesterDocs});
-        }else{
-            //render student stuff
-            res.render("alldocsviewpage",{semNum,user : finduser});
-        }
-    }else{
+        const allRelatedSemesterDocs = await Document.find({ relatedSem: semNum }); // all docs for corresponding semester
+        const selfUploadedDocs = await allRelatedSemesterDocs.filter((individualDoc) => {
+            return individualDoc.userId.toString() === finduser._id.toString();
+        })
+        //other teacher docs
+        const otherTeacherDocs = await allRelatedSemesterDocs.filter((individualDoc) => {
+            return individualDoc.userId.toString() != finduser._id.toString();
+        })
+        res.render("alldocsviewpage", { semNum, user: finduser, documents: allRelatedSemesterDocs,selfUploadedDocs, otherTeacherDocs });
+    } else {
         res.redirect("/login")
     }
 })
