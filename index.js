@@ -11,7 +11,7 @@ const mongoStore = require("connect-mongo"); // it helps in storing session data
 const bcrypt = require("bcrypt"); // it will help to encrypt user password
 var randomstring = require("randomstring"); // to create random string 
 const { initializeApp } = require('firebase/app'); // require firebase
-const { getStorage, ref, uploadBytes, getDownloadURL } = require("firebase/storage"); // getting required services from firestore
+const { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } = require("firebase/storage"); // getting required services from firestore
 const firebaseConfig = {
     apiKey: process.env.apiKey,
     authDomain: process.env.authDomain,
@@ -213,11 +213,9 @@ app.post("/login", async (req, res) => {
                 res.redirect(`/student/${findUser._id}`)
             }
         } else {
-            res.json({ "msg": "Entered wrong password." });
             res.redirect("/login");
         }
     } else {
-        res.json({ "msg": "This user does not exists" });
         res.redirect("/register");
     }
 });
@@ -333,7 +331,7 @@ app.post("/uploads/sem/:semNum", upload.single('sem_file'), async (req, res) => 
         }
         //-----------FILE UPLOADING ENDS ------------------
         //-----------GET DOCUMENT URL----------------
-        await uploadTask.then((snapshot) => {
+        uploadTask.then((snapshot) => {
             getDownloadURL(snapshot.ref).then(async (downloadURL) => {
                 // console.log('File available at', downloadURL);
                 uploadedDocUrl = downloadURL;
@@ -373,9 +371,41 @@ app.get("/view/docs/sem/:semNum", async (req, res) => {
         const otherTeacherDocs = await allRelatedSemesterDocs.filter((individualDoc) => {
             return individualDoc.userId.toString() != finduser._id.toString();
         })
-        res.render("alldocsviewpage", { semNum, user: finduser, documents: allRelatedSemesterDocs,selfUploadedDocs, otherTeacherDocs });
+        res.render("alldocsviewpage", { semNum, user: finduser, documents: allRelatedSemesterDocs, selfUploadedDocs, otherTeacherDocs });
     } else {
         res.redirect("/login")
+    }
+});
+//here post route is used instead of delete route -- because browser is not supporting method="delete" rather it is converting delete method to get method automatically
+app.post("/delete/doc/sem/:semNum/:docId", async (req, res) => {
+    const semNum = req.params.semNum;
+    const docId = req.params.docId;
+
+    const findThatDoc = await Document.findById(docId);
+    const docGivenName = findThatDoc.docGivenName;
+    // console.log(findThatDoc);
+    // console.log(docGivenName);
+    const imagesFolderRef = ref(imagesRef, `semester${semNum}/${docGivenName}`);
+    const documentsFolderRef = ref(documentsRef, `semester${semNum}/${docGivenName}`);
+   
+    if (findThatDoc.docType === "image/png" || findThatDoc.docType === "image/jpeg" ) {
+        // delete image
+        deleteObject(imagesFolderRef).then(async() => {
+            // File deleted successfully -- then delete in mongoDB
+            await Document.findByIdAndDelete(docId);
+            res.redirect(`/view/docs/sem/${semNum}`);
+        }).catch((error) => {
+            console.log(error);
+        });
+    }else{
+        //delete document
+        deleteObject(documentsFolderRef).then( async() => {
+            // File deleted successfully -- then delete in mongoDB
+            await Document.findByIdAndDelete(docId);
+            res.redirect(`/view/docs/sem/${semNum}`);
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 })
 

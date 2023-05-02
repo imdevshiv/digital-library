@@ -81,7 +81,8 @@
                             </div> -->
                             <ul class="list-group list-group-flush my-3">
                                 <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
-                                <!-- <li class="list-group-item">A second item</li> -->
+                                <li class="list-group-item">File Name : <%= document.docOriginalName
+                                    %>  </li>
                             </ul>
                             <div class="card-body">
                                 <button type="button" class="btn btn-primary btn-sm">View docs</button>
@@ -122,13 +123,14 @@
                                         <ul class="list-group list-group-flush my-3">
                                             <li class="list-group-item">Uploaded By : You </li>
                                             <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
-                                            <!-- <li class="list-group-item">A second item</li> -->
+                                            <li class="list-group-item">File Name : <%= document.docOriginalName
+                                                %>  </li>
                                         </ul>
                                         <div class="card-body">
                                             <button type="button" class="btn btn-primary btn-sm">View docs</button>
                                             <button type="button" class="btn btn-success btn-sm mx-3">Download</button>
-                                            <form style="display: inline-block;" action="/delete/doc/sem/<%= semNum %>/<%=document._id  %>" method="delete">
-                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                            <form style="display: inline-block;" method="post" action="/delete/doc/sem/<%= semNum %>/<%=document._id  %>" >
+                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                             </form>
                                         </div>
                                     </div>
@@ -165,7 +167,8 @@
                                         <ul class="list-group list-group-flush my-3">
                                             <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
                                             <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
-                                            <!-- <li class="list-group-item">A second item</li> -->
+                                            <li class="list-group-item">File Name : <%= document.docOriginalName
+                                                %>  </li>
                                         </ul>
                                         <div class="card-body">
                                             <button type="button" class="btn btn-primary btn-sm">View docs</button>
