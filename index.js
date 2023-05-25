@@ -3,7 +3,9 @@ const express = require('express');
 //const path = require('path');
 const ejs = require("ejs"); // require embeded javascript
 const bodyParser = require('body-parser'); // to help get form data from frontend
+const cors = require('cors')
 const multer = require('multer'); // to catch files from form data from frontend
+var _ = require('lodash');
 const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose"); // to build connection between server and mongoDB
 const session = require("express-session"); // to store user session details
@@ -22,7 +24,7 @@ const firebaseConfig = {
     measurementId: process.env.measurementId
 };
 const fireBaseApp = initializeApp(firebaseConfig);
-const storage = getStorage(); //points to root directory of 
+const storage = getStorage(fireBaseApp); //points to root directory of 
 const imagesRef = ref(storage, 'images/'); // create images reference or images (child)folder inside root directory
 const documentsRef = ref(storage, 'documents/') //create documents reference or documents (child)folder inside root directory
 // build connection with mongo
@@ -39,6 +41,7 @@ const connectToMongoDB = async function () {
 connectToMongoDB(); // connect to mongoDB
 
 const app = express();  // make express app first
+app.use(cors({origin:"http://localhost:5000"}))
 app.use(bodyParser.urlencoded({ extended: true })); // enables to get data from client side
 app.use(express.static("public")); // to serve as a basic file to front side browser
 app.set("view engine", "ejs"); // to render ejs files
@@ -74,14 +77,13 @@ app.use(session({
         // cookies will be stored for one week and then automatically deleted.
     }
 }));
-
-
 // first define a schema
 const usersSchema = new mongoose.Schema({
     name: String,
     email: String,
     userType: String,
     password: String,
+    isApproved : Number
 });
 const User = new mongoose.model("User", usersSchema);
 
@@ -140,21 +142,29 @@ app.get("/register", (req, res) => {
     // res.sendFile('public/registration.html' , {root : __dirname});
     res.render("registration");
 });
+//_.toLower("Hello@GMAIL.COM") // returns hello@gmail.com
+// _.upperFirst("sree dale") //returns Sree
+
 app.post("/register", async (req, res) => {
     try {
         const name = req.body.name;
-        const email = req.body.email;
+        const email = _.toLower(req.body.email);
         const userType = req.body.userType;
         const password = req.body.password;
         const foundUser = await User.findOne({ email: email });
         if (foundUser) {
             res.send("User exists");
         } else {
+            let num = 0; 
+            if (userType === "Student") {
+                num = 1;
+            }
             const newUser = new User({
                 name: name,
                 email: email,
                 userType: userType,
-                password: password
+                password: password,
+                isApproved : num
             });
             const savedUser = await newUser.save();
             // these session datas are being saved in my mongoDB data base -- browser only storing session id in the Cokie - which will be sent to server in every request it makes
@@ -226,7 +236,6 @@ app.get('/logout', (req, res) => {
             if (err) {
                 console.log(err);
             } else {
-                console.log("User loged out successfully");
                 // redirect to home route
                 res.redirect('/');
             }
@@ -412,7 +421,7 @@ app.post("/delete/doc/sem/:semNum/:docId", async (req, res) => {
 
 
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 app.listen(port, function () {
     console.log("Server started on port " + `${port}`);
 })

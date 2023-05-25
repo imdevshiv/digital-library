@@ -9,16 +9,28 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
     <link rel="stylesheet" href="./css/login.css">
-</head>
 
+    <style>
+      .home-link{
+        text-decoration: underline;
+        color: white;
+        position: absolute;
+        left: 5%;
+        top: 5%;
+        font-size: 1.3rem;
+        color: white;
+      }
+    </style>
+</head>
 <body>
+  <a class="home-link" href="/">Home</a>
     <div class="container">
         <div class="wrapper">
           <div class="title"><span>Login Form</span></div>
           <form action="/login" method="POST">
             <div class="row">
               <!-- <i class="fas fa-user"></i> -->
-              <input name="email" type="email" placeholder="Email or Phone" required>
+              <input autocomplete="off"name="email" type="email" placeholder="Email or Phone" required>
             </div>
             <!-- <div class="row">
               <label for="user type">User Type :</label>
@@ -29,7 +41,7 @@
            </div> -->
             <div class="row">
               <!-- <i class="fas fa-lock"></i> -->
-              <input name="password" type="password" placeholder="Password" required>
+              <input name="password" type="password" placeholder="Password"  required>
             </div>
             <!-- <div class="pass"><a href="#">Forgot password?</a></div> -->
             <div class="row button">

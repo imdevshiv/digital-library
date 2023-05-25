@@ -1,13 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>This is home page</title>
-</head>
-<body>
-    <a href="/login"><h1>Login</h1></a>
-    <a href="/register"><h1>Register</h1></a>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to digital library</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      ::selection {
+        background: rgba(26, 188, 156, 0.3);
+      }
+      body {
+        background: #1abc9c;
+        overflow: hidden;
+      }
+      a{
+        text-decoration:none;
+        color: white;
+        display: inline-block;
+        text-align: center;
+        padding: 0.5rem;
+        font-size: 1.2rem;
+        margin: 0.5rem;
+        border-radius: 20px;
+        width: 150px;
+        border: 2px solid white;
+        transition: all 0.3s ease-in;
+      }
+      .main{
+        min-height: 100vh;
+      }
+      .container{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        padding: 1rem;
+      }
+      a:hover{
+        background-color: white;
+        color: #1abc9c;
+      }
+      a.login{
+        background-color: white;
+        color: #1abc9c;
+      }
+      .hero-content h1{
+         text-align: center;
+         font-size: 3rem;
+         margin-bottom: 2rem;
+      }
+      .footer{
+        min-height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+        <div class="container">
+            <div class="hero-content">
+             <h1 >Welcome to <br> Digital Library</h1>
+            </div>
+            <div class="login-registration-box">
+                 <a class="login" href="/login">Login</a>
+                 <a class="register" href="/register">Register</a>
+            </div>
+         </div>
+    </div>
+    
+    <div class="footer">
+
+    </div>
+  </body>
 </html>
