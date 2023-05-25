@@ -5,6 +5,7 @@ const ejs = require("ejs"); // require embeded javascript
 const bodyParser = require('body-parser'); // to help get form data from frontend
 const cors = require('cors')
 const multer = require('multer'); // to catch files from form data from frontend
+var _ = require('lodash');
 const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose"); // to build connection between server and mongoDB
 const session = require("express-session"); // to store user session details
@@ -76,8 +77,6 @@ app.use(session({
         // cookies will be stored for one week and then automatically deleted.
     }
 }));
-
-
 // first define a schema
 const usersSchema = new mongoose.Schema({
     name: String,
@@ -143,10 +142,13 @@ app.get("/register", (req, res) => {
     // res.sendFile('public/registration.html' , {root : __dirname});
     res.render("registration");
 });
+//_.toLower("Hello@GMAIL.COM") // returns hello@gmail.com
+// _.upperFirst("sree dale") //returns Sree
+
 app.post("/register", async (req, res) => {
     try {
         const name = req.body.name;
-        const email = req.body.email;
+        const email = _.toLower(req.body.email);
         const userType = req.body.userType;
         const password = req.body.password;
         const foundUser = await User.findOne({ email: email });
@@ -234,7 +236,6 @@ app.get('/logout', (req, res) => {
             if (err) {
                 console.log(err);
             } else {
-                console.log("User loged out successfully");
                 // redirect to home route
                 res.redirect('/');
             }

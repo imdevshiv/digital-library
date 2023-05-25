@@ -122,8 +122,18 @@
                                             </li>
                                         </ul>
                                         <div class="card-body">
-                                            <button type="button" class="btn btn-primary btn-sm">View docs</button>
-                                            <button type="button" class="btn btn-success btn-sm">Download</button>
+                                            <button
+                                                onclick="viewFile('<%= document.uploadedDocUrl %>')"
+                                                type="button"
+                                                class="btn btn-primary btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal">
+                                                View docs
+                                            </button>
+                                            <a href="<%= document.uploadedDocUrl %>"
+                                                class="btn btn-success btn-sm"
+                                                download>Download
+                                            </a>
                                         </div>
                         </div>
                     </div>
@@ -233,7 +243,8 @@
                                                                             </button>
                                                                             <a href="<%= document.uploadedDocUrl %>"
                                                                                 class="btn btn-success btn-sm"
-                                                                                download>Download</a>
+                                                                                download>Download
+                                                                            </a>
                                                                         </div>
                                                         </div>
                                                     </div>
