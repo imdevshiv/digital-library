@@ -3,6 +3,7 @@ const express = require('express');
 //const path = require('path');
 const ejs = require("ejs"); // require embeded javascript
 const bodyParser = require('body-parser'); // to help get form data from frontend
+const cors = require('cors')
 const multer = require('multer'); // to catch files from form data from frontend
 const { ObjectId } = require('mongodb');
 const mongoose = require("mongoose"); // to build connection between server and mongoDB
@@ -39,6 +40,7 @@ const connectToMongoDB = async function () {
 connectToMongoDB(); // connect to mongoDB
 
 const app = express();  // make express app first
+app.use(cors({origin:"http://localhost:5000"}))
 app.use(bodyParser.urlencoded({ extended: true })); // enables to get data from client side
 app.use(express.static("public")); // to serve as a basic file to front side browser
 app.set("view engine", "ejs"); // to render ejs files
@@ -82,6 +84,7 @@ const usersSchema = new mongoose.Schema({
     email: String,
     userType: String,
     password: String,
+    isApproved : Number
 });
 const User = new mongoose.model("User", usersSchema);
 
@@ -150,11 +153,16 @@ app.post("/register", async (req, res) => {
         if (foundUser) {
             res.send("User exists");
         } else {
+            let num = 0; 
+            if (userType === "Student") {
+                num = 1;
+            }
             const newUser = new User({
                 name: name,
                 email: email,
                 userType: userType,
-                password: password
+                password: password,
+                isApproved : num
             });
             const savedUser = await newUser.save();
             // these session datas are being saved in my mongoDB data base -- browser only storing session id in the Cokie - which will be sent to server in every request it makes
@@ -412,7 +420,7 @@ app.post("/delete/doc/sem/:semNum/:docId", async (req, res) => {
 
 
 
-const port = 5000;
+const port = process.env.PORT || 5000;
 app.listen(port, function () {
     console.log("Server started on port " + `${port}`);
 })

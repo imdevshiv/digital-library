@@ -9,12 +9,13 @@
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 </head>
 <body>
+    <a style="position: absolute;top: 5%;left: 5%;margin-bottom: 2rem;font-size: 1rem;font-weight: bolder;" href="/">Go Home</a>
     <div class="container" style="margin-top: 100px;">
         <h3>Semester <%= semesterNum %> uploads</h3>
         <form class="was-validated" action="<%= '/uploads/sem/' + semesterNum %>" method="post" enctype="multipart/form-data" >
             <div class="mb-3">
-              <input name="sem_file" type="file" class="form-control" aria-label="file example" required>
-              <div class="invalid-feedback">You have not uploaded any files. *(Please upload .pdf files)</div>
+              <input name="sem_file" accept="application/pdf" type="file" class="form-control" aria-label="file example" required>
+              <div class="invalid-feedback">You have not uploaded any files. *(Please upload .pdf files) Max size : 10 MB</div>
             </div>
             <div class="mb-3">
               <button class="btn btn-primary" type="submit">Upload Document</button>

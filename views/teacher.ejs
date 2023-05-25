@@ -8,11 +8,33 @@
     <title>This is Teacher page</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        ::selection {
+            background: rgba(26, 188, 156, 0.3);
+        }
+
+        body {
+            background: #1abc9c;
+        }
+
+        @media only screen and (max-width: 700px) {
+            ul.dropdown-menu {
+                left: 1rem !important;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <!-- NAVIGATION BAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3 mb-3 border-bottom bg-dark" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3 mb-3 border-bottom bg-dark">
         <div class="container">
             <a class="navbar-brand" href="/">Digital Library</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -27,18 +49,12 @@
                     </li>
                 </ul>
                 <div class="dropdown">
-                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle text-white"
+                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle "
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- user name -->
                         <%= user.userType %> : <%= user.name %>
                     </a>
                     <ul class="dropdown-menu text-small" style="left: -5rem;">
-                        <li><a class="dropdown-item" href="#">New project...</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
                         <li><a class="dropdown-item" href="/logout">Log out</a></li>
                     </ul>
                 </div>
@@ -47,12 +63,16 @@
     </nav>
 
     <!-- HERO CONTENT -->
-    <div class="album py-5 bg-body-tertiary">
+    
+    <div class="album py-5 ">
+        <% if(user.isApproved){ %>
+
+        <% }else{ %>
+            <p style="color: rgb(254, 254, 254); margin-left: 5%;" >*Once You are approved You will be able to upload docs</p>
+        <% } %>
         <div class="container">
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-
                 <!-- all albums starts -->
                 <!-- semester 1 -->
                 <div class="col">
@@ -66,7 +86,8 @@
                         </svg>
                         <div class="card-body">
                             <p class="card-text">
-                                Teachers Contribution : This is a wider card with supporting text below as a natural lead-in to
+                                Teachers Contribution : This is a wider card with supporting text below as a natural
+                                lead-in to
                                 additional content. This content is a little bit longer.
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -74,11 +95,17 @@
                                     <a href="/view/docs/sem/1" class="mx-2">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                     </a>
-                                    <a href="/uploads/sem/1">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
-                                    </a>
+                                    <% if(user.isApproved){%>
+                                        <a href="/uploads/sem/1">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
+                                        </a>
+                                    <% }else{ %>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary disabled">Upload</button>
+                                     <% } %>   
                                 </div>
-                                <small class="text-body-secondary"><%= sem1TotalDocs %> Documents</small>
+                                <small class="text-body-secondary">
+                                    <%= sem1TotalDocs %> Documents
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -96,19 +123,26 @@
                         </svg>
                         <div class="card-body">
                             <p class="card-text">
-                                Teachers Contribution : This is a wider card with supporting text below as a natural lead-in to
+                                Teachers Contribution : This is a wider card with supporting text below as a natural
+                                lead-in to
                                 additional content. This content is a little bit longer.
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a href="/view/docs/sem/2" class="mx-2" >
+                                    <a href="/view/docs/sem/2" class="mx-2">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                     </a>
-                                    <a href="/uploads/sem/2">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
-                                    </a>
+                                    <% if(user.isApproved){%>
+                                        <a href="/uploads/sem/2">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
+                                        </a>
+                                    <% }else{ %>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary disabled">Upload</button>
+                                     <% } %> 
                                 </div>
-                                <small class="text-body-secondary"><%= sem2TotalDocs %> Documents</small>
+                                <small class="text-body-secondary">
+                                    <%= sem2TotalDocs %> Documents
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -126,7 +160,8 @@
                         </svg>
                         <div class="card-body">
                             <p class="card-text">
-                                Teachers Contribution : This is a wider card with supporting text below as a natural lead-in to
+                                Teachers Contribution : This is a wider card with supporting text below as a natural
+                                lead-in to
                                 additional content. This content is a little bit longer.
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -134,11 +169,17 @@
                                     <a href="/view/docs/sem/3" class="mx-2">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                     </a>
-                                    <a href="/uploads/sem/3">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
-                                    </a>
+                                    <% if(user.isApproved){%>
+                                        <a href="/uploads/sem/3">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
+                                        </a>
+                                    <% }else{ %>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary disabled">Upload</button>
+                                     <% } %> 
                                 </div>
-                                <small class="text-body-secondary"><%= sem3TotalDocs %> Documents</small>
+                                <small class="text-body-secondary">
+                                    <%= sem3TotalDocs %> Documents
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -156,7 +197,8 @@
                         </svg>
                         <div class="card-body">
                             <p class="card-text">
-                                Teachers Contribution : This is a wider card with supporting text below as a natural lead-in to
+                                Teachers Contribution : This is a wider card with supporting text below as a natural
+                                lead-in to
                                 additional content. This content is a little bit longer.
                             </p>
                             <div class="d-flex justify-content-between align-items-center">
@@ -164,11 +206,17 @@
                                     <a href="/view/docs/sem/4" class="mx-2">
                                         <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
                                     </a>
-                                    <a href="/uploads/sem/4">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
-                                    </a>
+                                    <% if(user.isApproved){%>
+                                        <a href="/uploads/sem/4">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary">Upload</button>
+                                        </a>
+                                    <% }else{ %>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary disabled">Upload</button>
+                                     <% } %> 
                                 </div>
-                                <small class="text-body-secondary"><%= sem4TotalDocs %> Documents</small>
+                                <small class="text-body-secondary">
+                                    <%= sem4TotalDocs %> Documents
+                                </small>
                             </div>
                         </div>
                     </div>

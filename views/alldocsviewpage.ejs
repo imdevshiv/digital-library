@@ -10,18 +10,53 @@
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        ::selection {
+            background: rgba(26, 188, 156, 0.3);
+        }
+
+        body {
+            background: #1abc9c;
+        }
+
         iframe {
             display: block;
             width: 100%;
+            height: 100%;
             border: none;
             outline: none;
+        }
+
+        .modal-dialog-scrollable .modal-content {
+            min-height: 100vh;
+        }
+
+        .modal-body {
+            height: 100%;
+        }
+
+        iframe#modal-iframe {
+            display: block;
+            height: 100vh;
+        }
+
+        @media only screen and (max-width: 600px) {
+            ul.dropdown-menu{
+                left: 1rem !important;
+            }
         }
     </style>
 </head>
 
 <body>
     <!-- NAVIGATION BAR -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3 mb-3 border-bottom bg-dark" data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary p-3 mb-3 border-bottom bg-dark">
         <div class="container">
             <a class="navbar-brand" href="/">Digital Library</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -35,23 +70,24 @@
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                 </ul>
+
+
+
                 <div class="dropdown">
-                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle text-white"
+                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle "
                         data-bs-toggle="dropdown" aria-expanded="false">
                         <!-- user name -->
                         <%= user.userType %> : <%= user.name %>
                     </a>
                     <ul class="dropdown-menu text-small" style="left: -5rem;">
-                        <li><a class="dropdown-item" href="#">New project...</a></li>
-                        <li><a class="dropdown-item" href="#">Settings</a></li>
-                        <li><a class="dropdown-item" href="#">Profile</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
                         <li><a class="dropdown-item" href="/logout">Log out</a></li>
                     </ul>
                 </div>
+
             </div>
+        </div>
+
+
         </div>
     </nav>
 
@@ -62,129 +98,210 @@
         </div>
         <!-- IF THE USER IS ONLY STUDENT -->
         <!-- STUDENT SECTION STARTS -->
-        <% if (user.userType === "Student") { %>
+        <% if (user.userType==="Student" ) { %>
             <div class="row gy-3 my-3"><!-- row starts -->
                 <% documents.forEach(function(document) { %>
                     <!-- populate all documents -->
                     <div class="col-sm-6 col-md-4 col-lg-3">
                         <div class="card">
                             <!-- Shows Image / pdf -->
-                            <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
+                            <% if ( document.docType==="image/png" || document.docType==="image/jpeg" ) { %>
                                 <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
-                            <% }else{ %>
-                                <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
-                            <% } %>
-                            <!-- <div class="card-body">
+                                <% }else{ %>
+                                    <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
+                                    <% } %>
+                                        <!-- <div class="card-body">
                                 <h5 class="card-title">Card title</h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of
                                     the card's content.</p>
                             </div> -->
-                            <ul class="list-group list-group-flush my-3">
-                                <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
-                                <li class="list-group-item">File Name : <%= document.docOriginalName
-                                    %>  </li>
-                            </ul>
-                            <div class="card-body">
-                                <button type="button" class="btn btn-primary btn-sm">View docs</button>
-                                <button type="button" class="btn btn-success btn-sm">Download</button>
-                            </div>
-                        </div>
-                    </div>
-                <% }); %>
-            </div><!-- row ends -->
-            <!-- STUDENT SECTION ENDS -->
-        <% }else{ %>
-                <!-- THEN USER MUST BE TEACHER -->
-                <hr>
-                <h3>DocumentsUploaded By You</h3>
-                <hr>
-                <% selfUploadedDocs %>
-                <!-- INDIVIDUAL TEACHER SECTION STARTS -->
-                <!-- Check whether teacher uploaded to this semester -->
-                    <% if(selfUploadedDocs.length === 0){ %>
-                        <p>No documents yet you have uploaded to Semester<%= semNum %>. </p>
-                    <% }else{ %>
-                        <div class="row gy-3 my-3"><!-- row starts -->
-                            <% selfUploadedDocs.forEach(function(document) { %>
-                                <!-- populate all documents -->
-                                <div class="col-sm-6 col-md-4 col-lg-3">
-                                    <div class="card">
-                                        <!-- Shows Image / pdf -->
-                                        <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
-                                            <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
-                                        <% }else{ %>
-                                            <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
-                                        <% } %>
-                                        <!-- <div class="card-body">
-                                            <h5 class="card-title">Card title</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                                                the card's content.</p>
-                                        </div> -->
                                         <ul class="list-group list-group-flush my-3">
-                                            <li class="list-group-item">Uploaded By : You </li>
-                                            <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
-                                            <li class="list-group-item">File Name : <%= document.docOriginalName
-                                                %>  </li>
-                                        </ul>
-                                        <div class="card-body">
-                                            <button type="button" class="btn btn-primary btn-sm">View docs</button>
-                                            <button type="button" class="btn btn-success btn-sm mx-3">Download</button>
-                                            <form style="display: inline-block;" method="post" action="/delete/doc/sem/<%= semNum %>/<%=document._id  %>" >
-                                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            <% }); %>
-                        </div><!-- row ends -->
-                    <% } %>
-                    <!-- INDIVIDUAL TEACHER SECTION ENDS -->
-                <hr>
-                <h3>Documents uploaded By Other Teachers</h3>
-                <hr>
-                <% otherTeacherDocs %>
-                    <!-- OTHER TEACHER SECTION STARTS -->
-                    <!-- Check whether teacher uploaded to this semester -->
-                    <% if(otherTeacherDocs.length === 0){ %>
-                        <h5>Other teachers not yet uploaded any documents to Semester<%= semNum %>. </h5>
-                    <% }else{ %>
-                        <div class="row gy-3 my-3"><!-- row starts -->
-                            <% otherTeacherDocs.forEach(function(document) { %>
-                                <!-- populate all documents -->
-                                <div class="col-sm-6 col-md-4 col-lg-3">
-                                    <div class="card">
-                                        <!-- Shows Image / pdf -->
-                                        <% if ( document.docType === "image/png" || document.docType === "image/jpeg" ) { %>
-                                            <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
-                                        <% }else{ %>
-                                            <iframe src="<%= document.uploadedDocUrl %>" frameborder="0"></iframe>
-                                        <% } %>
-                                        <!-- <div class="card-body">
-                                            <h5 class="card-title">Card title</h5>
-                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
-                                                the card's content.</p>
-                                        </div> -->
-                                        <ul class="list-group list-group-flush my-3">
-                                            <li class="list-group-item">Uploaded By : <%= document.uploadedBy %> </li>
-                                            <li class="list-group-item">Document Type : <%=document.docType  %>  </li>
-                                            <li class="list-group-item">File Name : <%= document.docOriginalName
-                                                %>  </li>
+                                            <li class="list-group-item">Uploaded By : <%= document.uploadedBy %>
+                                            </li>
+                                            <li class="list-group-item">File Name : <%= document.docOriginalName %>
+                                            </li>
                                         </ul>
                                         <div class="card-body">
                                             <button type="button" class="btn btn-primary btn-sm">View docs</button>
                                             <button type="button" class="btn btn-success btn-sm">Download</button>
                                         </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div><!-- row ends -->
+            <!-- STUDENT SECTION ENDS -->
+            <% }else{ %>
+                <!-- THEN USER MUST BE TEACHER -->
+                <hr>
+                <h3>DocumentsUploaded By You</h3>
+                <hr>
+                <% selfUploadedDocs %>
+                    <!-- INDIVIDUAL TEACHER SECTION STARTS -->
+                    <!-- Check whether teacher uploaded to this semester -->
+                    <% if(selfUploadedDocs.length===0){ %>
+                        <p>No documents yet you have uploaded to Semester<%= semNum %>. </p>
+                        <% }else{ %>
+                            <div class="row gy-3 my-3"><!-- row starts -->
+                                <% selfUploadedDocs.forEach(function(document) { %>
+                                    <!-- populate all documents -->
+                                    <div class="col-sm-6 col-md-4 col-lg-3">
+                                        <div class="card">
+                                            <!-- Shows Image / pdf -->
+                                            <% if ( document.docType==="image/png" || document.docType==="image/jpeg" )
+                                                { %>
+                                                <img src="<%= document.uploadedDocUrl %>" alt="" srcset="">
+                                                <% }else{ %>
+                                                    <iframe src="<%= document.uploadedDocUrl %>"
+                                                        frameborder="0"></iframe>
+                                                    <% } %>
+                                                        <!-- <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                                the card's content.</p>
+                                        </div> -->
+                                                        <ul class="list-group list-group-flush my-3">
+                                                            <li class="list-group-item">Uploaded By : You </li>
+                                                            <li class="list-group-item">Document Type :
+                                                                <%=document.docType %>
+                                                            </li>
+                                                            <li class="list-group-item">File Name : <%=
+                                                                    document.docOriginalName %>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="card-body">
+                                                            <!-- <button type="button" class="btn btn-primary btn-sm">View docs</button>
+                                            <button type="button" class="btn btn-success btn-sm mx-3">Download</button> -->
+
+                                                            <button onclick="viewFile('<%= document.uploadedDocUrl %>')"
+                                                                type="button" class="btn btn-primary btn-sm"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#exampleModal">View docs</button>
+                                                            <!-- <button id="download-btn" onclick="(() => downloadFile('<%= document.uploadedDocUrl %>', '<%= document.docOriginalName %>' ))" class="btn btn-success btn-sm">Download</button> -->
+                                                            <a href="<%= document.uploadedDocUrl %>"
+                                                                class="btn btn-success btn-sm" download>Download</a>
+
+                                                            <form style="display: inline-block;" method="post"
+                                                                action="/delete/doc/sem/<%= semNum %>/<%=document._id  %>">
+                                                                <button type="submit"
+                                                                    class="btn btn-danger btn-sm">Delete</button>
+                                                            </form>
+                                                        </div>
+                                        </div>
                                     </div>
-                                </div>
-                            <% }); %>
-                        </div><!-- row ends -->
-                    <% } %>
-                    <!-- OTHER TEACHER SECTION ENDS -->
-        <!-- TEACHER SECTION ENDS -->
-        <% } %>
+                                    <% }); %>
+                            </div><!-- row ends -->
+                            <% } %>
+                                <!-- INDIVIDUAL TEACHER SECTION ENDS -->
+                                <hr>
+                                <h3>Documents uploaded By Other Teachers</h3>
+                                <hr>
+                                <% otherTeacherDocs %>
+                                    <!-- OTHER TEACHER SECTION STARTS -->
+                                    <!-- Check whether teacher uploaded to this semester -->
+                                    <% if(otherTeacherDocs.length===0){ %>
+                                        <h5>Other teachers not yet uploaded any documents to Semester<%= semNum %>.
+                                        </h5>
+                                        <% }else{ %>
+                                            <div class="row gy-3 my-3"><!-- row starts -->
+                                                <% otherTeacherDocs.forEach(function(document) { %>
+                                                    <!-- populate all documents -->
+                                                    <div class="col-sm-6 col-md-4 col-lg-3">
+                                                        <div class="card">
+                                                            <!-- Shows Image / pdf -->
+                                                            <% if ( document.docType==="image/png" ||
+                                                                document.docType==="image/jpeg" ) { %>
+                                                                <img src="<%= document.uploadedDocUrl %>" alt=""
+                                                                    srcset="">
+                                                                <% }else{ %>
+                                                                    <iframe src="<%= document.uploadedDocUrl %>"
+                                                                        frameborder="0"></iframe>
+                                                                    <% } %>
+                                                                        <!-- <div class="card-body">
+                                            <h5 class="card-title">Card title</h5>
+                                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                                                the card's content.</p>
+                                        </div> -->
+                                                                        <ul class="list-group list-group-flush my-3">
+                                                                            <li class="list-group-item">Uploaded By :
+                                                                                <%= document.uploadedBy %>
+                                                                            </li>
+                                                                            <li class="list-group-item">Document Type :
+                                                                                <%=document.docType %>
+                                                                            </li>
+                                                                            <li class="list-group-item">File Name : <%=
+                                                                                    document.docOriginalName %>
+                                                                            </li>
+                                                                        </ul>
+                                                                        <div class="card-body">
+                                                                            <!-- Button trigger modal -->
+                                                                            <button
+                                                                                onclick="viewFile('<%= document.uploadedDocUrl %>')"
+                                                                                type="button"
+                                                                                class="btn btn-primary btn-sm"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#exampleModal">View
+                                                                                docs</button>
+                                                                            <!-- <button id="download-btn" onclick="(() => downloadFile('<%= document.uploadedDocUrl %>', '<%= document.docOriginalName %>' ))" class="btn btn-success btn-sm">Download</button> -->
+                                                                            <a href="<%= document.uploadedDocUrl %>"
+                                                                                class="btn btn-success btn-sm"
+                                                                                download>Download</a>
+                                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
+                                            </div><!-- row ends -->
+                                            <% } %>
+                                                <!-- OTHER TEACHER SECTION ENDS -->
+                                                <!-- TEACHER SECTION ENDS -->
+                                                <% } %>
 
     </div> <!-- container ends -->
+    <!-- Scrollable modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Document</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="modal-iframe" src="" frameborder="0">
 
+                    </iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- scripts for view and download starts -->
+    <script>
+        // const downloadBtn = document.querySelector('#download-btn');
+        // downloadBtn.addEventListener('click', (docUrl, docName) => {
+        // fetch(docUrl, docName)
+        //     .then(response => response.blob())
+        //     .then(blob => {
+        //     const url = URL.createObjectURL(blob);
+        //     const link = document.createElement('a');
+        //     link.download = docName; // Replace with the desired filename
+        //     link.href = url;
+        //     link.click();
+        //     });
+        // });
+        function viewFile(docUrl) {
+            console.log(docUrl);
+            console.log("Helo");
+            let modalIfram = document.getElementById('modal-iframe');
+            modalIfram.setAttribute('src', docUrl);
+        }
+        //    const myModalEl = document.getElementById('myModal')
+        //     myModalEl.addEventListener('hidden.bs.modal', event => {
+        //     // do something...
+        //     })
+    </script>
+    <!-- scripts for view and download ends -->
 
     <!-- BOTSTRAP JS LINK -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
