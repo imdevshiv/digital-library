@@ -23,7 +23,7 @@ const firebaseConfig = {
     measurementId: process.env.measurementId
 };
 const fireBaseApp = initializeApp(firebaseConfig);
-const storage = getStorage(); //points to root directory of 
+const storage = getStorage(fireBaseApp); //points to root directory of 
 const imagesRef = ref(storage, 'images/'); // create images reference or images (child)folder inside root directory
 const documentsRef = ref(storage, 'documents/') //create documents reference or documents (child)folder inside root directory
 // build connection with mongo
