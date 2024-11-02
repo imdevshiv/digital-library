@@ -9,10 +9,12 @@
   "author": "\"Abhishek Badapanda\"",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "connect-mongo": "^5.0.0",
     "cors": "^2.8.5",
+    "digital-library": "file:",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -22,6 +24,7 @@
     "mongodb": "^5.3.0",
     "mongoose": "^7.0.4",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
     "randomstring": "^1.2.3"
   }
 }
